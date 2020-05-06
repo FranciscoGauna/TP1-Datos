@@ -103,9 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#csv pesados
-*.csv
-
 #imagenes
 *.png
 *.jpg
