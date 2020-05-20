@@ -5,13 +5,30 @@ def getDomain(url):
     parsed_uri = urlparse(url)
     result = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     return result;
-    
+
+def getDomainWithoutSchema(url):
+    parsed_uri = urlparse(url)
+    result = '{uri.netloc}'.format(uri=parsed_uri)
+    return result;
+
+def hasLinks(string): 
+    links = re.findall("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", string) 
+    return len(links) > 0
+
 def getlinks(string): 
     URL_REGEX = r"""((?:(?:https|ftp|http)?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|org|uk)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|uk|ac)\b/?(?!@)))"""
     links = re.findall(URL_REGEX, string)
     
-    if(len(links) > 0):
-        return list(map(getDomain, links))
+    valid_links = []
+    for link in links:
+        ValidHostnameRegex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$";
+        
+        #valid hosts only allow some characters
+        if re.match(ValidHostnameRegex, getDomainWithoutSchema(link)):
+            valid_links.append(link)
+
+    if(len(valid_links) > 0):
+        return list(map(getDomain, valid_links))
     
     return ();
 
